@@ -1,0 +1,178 @@
+---
+id: throne-cli-ip
+title: Using the IP module
+sidebar_label: throne ip
+description: Using the ip module within throne
+---
+
+thrones IP module has two primary functions, `geo` and `info`. 
+
+```bash title="Help"
+[user@throne ~]$ throne ip
+Usage: throne ip [OPTIONS] COMMAND [ARGS]...
+
+  Retrieve IP related information.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  geo   Retrieves geolocation information for a specified IP address.
+  info  Retrieves IP and registered contact information.
+```
+
+### ip geo
+
+The ip geo command has one argument for it and that is an IP address needs to be specified. It will then query out and get geolocation information
+for the IP specified.
+
+```bash title="Example"
+[user@throne ~]$ throne ip geo 1.1.1.1
+IP Address: 1.1.1.1
+AS Number: AS13335 Cloudflare, Inc.
+ISP: Cloudflare, Inc
+Organization: APNIC and Cloudflare DNS Resolver project
+---
+Location: South Brisbane, QLD, AU
+Lat/Long: -27.4766/153.0166
+Timezone: Australia/Brisbane
+```
+
+Looking at the output above we can see that this command will output a few things for us.
+
+- IP Address - The IP that was queried
+- AS Number - The AS number and holder that is advertising the specified IP
+- ISP - The name of the organization identified as the "ISP". This will typically also be whoever whos the AS number above
+- Organization - The API used returns this variable, it appears to grab the first description line for the inetnum/inet6num object
+- Location - The location this IP is registered out of. This may differ from what the RIR has if the IP owner has requested it be updated in DBs such as MaxMind
+- Lat/Long - The latitude and longitude of the location above
+- Timezone - The timezone that the location above is located in
+
+## ip info
+
+The ip info command has one option and an argument that must be specified. You can use the `-a`/`--all` option with this command to output additional BGP info
+for the argument. The argument here can be an IP address or a prefix.
+
+```bash title="Help"
+[user@throne ~]$ throne ip info --help
+Usage: throne ip info [OPTIONS] IP_OR_PREFIX
+
+  Retrieves IP and registered contact information.
+
+Options:
+  -a, --all  Gets IP + BGP info
+  --help     Show this message and exit.
+```
+
+Lets see how this works without specifying the `-a` option.
+
+```bash title="Example"
+[user@throne ~]$ throne ip info 1.1.1.1
+---IP Info---
+Issued By: APNIC
+Status: ASSIGNED PORTABLE
+Name: APNIC-LABS
+CIDR: 1.1.1.0/24
+ Announced: True
+ Announced By: 13335
+ Version: v4
+ Beginning: 1.1.1.0
+ Ending: 1.1.1.255
+---APNIC/1.1.1.0 - 1.1.1.255 Contact Information---
+IRT-APNICRANDNET-AU (Abuse):
+ Entity Address: PO Box 3646 South Brisbane, QLD 4101 Australia
+ Entity Phone: None
+ Entity Email: helpdesk@apnic.net
+APNIC RESEARCH (Administrative/Technical):
+ Entity Address: PO Box 3646 South Brisbane, QLD 4101 Australia
+ Entity Phone: +61-7-3858-3199
+ Entity Email: research@apnic.net
+```
+
+This output looks fairly similar to the output for `throne bgp asn` but provides us the information about an IP not an ASN.
+
+- Issued By - The RIR who issued this IP/prefix
+- Status - The status of the prefix
+- Name - The name of the prefix registered with the RIR
+- CIDR - The CIDR notation for this IP/Prefix
+    - Announced - True/False; if the IP/prefix is announced/seen in a global routing table
+    - Announced by - What AS number is originating this prefix
+    - Version - Tells us if this is a v4 or v6 IP/prefix
+    - Beginning - The beginning of the prefix
+    - Ending - The end of the prefix
+- Contact Information
+    - X(ROLE): - In our example we see `IRT-APNICRANDNET-AU (Abuse)` and `APNIC RESEARCH (Administrative/Technical)`. throne will parse 
+    the readable name of each contact and their role and provide it as a header for the group/individual.
+    - Entity Address: The address the RIR has on-file for the contact
+    - Entity Phone: The phone number the RIR has on-file for the contact
+    - Entity Email: The email the RIR has on-file for the contact
+
+Now lets take a look at what we get when we specify the `-a` or `--all` option.
+
+```bash Title="Example - --all"
+[root@uswiauto01 ProjectThrone]# throne ip info 1.1.1.1 --all
+---IP Info---
+Issued By: APNIC
+Status: ASSIGNED PORTABLE
+Name: APNIC-LABS
+CIDR: 1.1.1.0/24
+ Announced: True
+ Announced By: 13335
+ Version: v4
+ Beginning: 1.1.1.0
+ Ending: 1.1.1.255
+---APNIC/1.1.1.0 - 1.1.1.255 Contact Information---
+IRT-APNICRANDNET-AU (Abuse):
+ Entity Address: PO Box 3646 South Brisbane, QLD 4101 Australia
+ Entity Phone: None
+ Entity Email: helpdesk@apnic.net
+APNIC RESEARCH (Administrative/Technical):
+ Entity Address: PO Box 3646 South Brisbane, QLD 4101 Australia
+ Entity Phone: +61-7-3858-3199
+ Entity Email: research@apnic.net
+---Basic ASN Info--
+AS#: 13335
+Holder: CLOUDFLARENET
+Announced: True
+---AS Block Info---
+AS Block: 13312-15359
+Name: IANA 16-bit Autonomous System (AS) Numbers Registry
+Description: Assigned by ARIN
+---ARIN/AS13335 Contact Information---
+Cloudflare, Inc. (Registrant):
+ Entity Address: 101 Townsend Street San Francisco CA 94107 United States
+ Entity Phone: None
+ Entity Email: None
+Abuse (Abuse):
+ Entity Address: 101 Townsend Street San Francisco CA 94107 United States
+ Entity Phone: +1-650-319-8930
+ Entity Email: abuse@cloudflare.com
+Admin (Technical):
+ Entity Address: 101 Townsend Street San Francisco CA 94107 United States
+ Entity Phone: +1-650-319-8930
+ Entity Email: rir@cloudflare.com
+NOC (Noc):
+ Entity Address: 101 Townsend Street San Francisco CA 94107 United States
+ Entity Phone: +1-650-319-8930
+ Entity Email: noc@cloudflare.com
+Abuse (Abuse):
+ Entity Address: 101 Townsend Street San Francisco CA 94107 United States
+ Entity Phone: +1-650-319-8930
+ Entity Email: abuse@cloudflare.com
+Admin (Technical/Administrative):
+ Entity Address: 101 Townsend Street San Francisco CA 94107 United States
+ Entity Phone: +1-650-319-8930
+ Entity Email: rir@cloudflare.com
+NOC (Noc):
+ Entity Address: 101 Townsend Street San Francisco CA 94107 United States
+ Entity Phone: +1-650-319-8930
+ Entity Email: noc@cloudflare.com
+```
+
+Looking at this output when you specify `-a` or `--all` it's a combination of two commands; `throne ip info` and `throne bgp asn`.
+
+Please review documentation for both of those commands to understand what this output is providing.
+
+#### Links
+- [throne ip info](https://www.throne.dev/docs/throne-cli-ip#ip-info)
+- [throne bgp asn](https://www.throne.dev/docs/throne-cli-bgp#bgp-asn)
