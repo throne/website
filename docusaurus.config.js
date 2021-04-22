@@ -2,7 +2,6 @@ const githubURL = "https://github.com/throne/throne-cli";
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  plugins: ['@docusaurus/plugin-google-analytics'],
   title: 'Throne',
   tagline: 'Watch from up on your throne.',
   url: 'https://www.throne.dev',
