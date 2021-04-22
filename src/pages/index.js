@@ -19,7 +19,7 @@ function Home() {
       <header className={classnames("hero", styles.heroBanner)}>
         <div className="container">
           <h1 className={classnames("hero__title", styles.title)}>
-            Throne
+            throne
           </h1>
           <h2 className={classnames("hero__subtitle", styles.subTitle)}>
           <Typewriter
@@ -32,6 +32,18 @@ function Home() {
               }}
             />
           </h2>
+          <div className={styles.buttons}>
+              <Link
+                className={classnames(
+                  "button button--outline button--primary button--gs",
+                  styles.homeBtn,
+                  styles.btnPrimary
+                )}
+                to={useBaseUrl("docs/introduction")}
+              >
+                What's throne?
+              </Link>
+          </div>
         </div>
       </header>
       <main>
