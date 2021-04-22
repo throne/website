@@ -37,7 +37,12 @@ module.exports = {
       style: 'dark',
       links: [
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Throne.  Built with Docusaurus.`,
+      logo: {
+        alt: "throne logo",
+        src: 'img/throne-logo-50x50-gold-white.png',
+        href: 'https://www.throne.dev'
+      },
+      copyright: `Copyright © ${new Date().getFullYear()} throne. Licensed under the MIT License. Made with ❤️ and Docusaurus.`,
     },
     colorMode: {
       defaultMode: 'dark',
