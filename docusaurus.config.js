@@ -13,7 +13,7 @@ module.exports = {
   projectName: 'throne-cli', // Usually your repo name.
   themeConfig: {
     googleAnalytics: {
-      trackingID: 'G-NXD5BC96BT',
+      trackingID: ' UA-195280503-1',
       anonymizeIP: true,
     },
     navbar: {
