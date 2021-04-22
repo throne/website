@@ -2,6 +2,7 @@ const githubURL = "https://github.com/throne/throne-cli";
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
+  plugins: ['@docusaurus/plugin-google-analytics'],
   title: 'Throne',
   tagline: 'Watch from up on your throne.',
   url: 'https://www.throne.dev',
@@ -12,6 +13,10 @@ module.exports = {
   organizationName: 'throne', // Usually your GitHub org/user name.
   projectName: 'throne-cli', // Usually your repo name.
   themeConfig: {
+    googleAnalytics: {
+      trackingID: 'G-NXD5BC96BT',
+      anonymizeIP: true,
+    },
     navbar: {
       logo: {
         alt: 'Throne Logo',
