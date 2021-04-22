@@ -1,0 +1,79 @@
+---
+id: throne-cli
+title: Using throne
+sidebar_label: throne
+description: Using the base throne command
+---
+
+Using throne is very easy! Let's start by going through the base `throne` command.
+
+```bash title='throne output'
+[user@throne ~] throne
+Usage: throne [OPTIONS] COMMAND [ARGS]...
+
+  Throne is a command line tool to query various things on the internet.
+
+Options:
+  -v, --verbose  Enables verbose mode.
+  --help         Show this message and exit.
+
+Commands:
+  abuse  Gets abuse information for the specified IP, prefix or ASN.
+  bgp    Retrieve BGP related information.
+  ip     Retrieve IP related information.
+```
+
+## Options
+
+Throne doesn't have very many options availble in the base command. In fact you have 2 availble to you. `-v` and `--help`.
+
+Using `--help` with throne, at any point in time within any of the commands it will provide you details on nested commands, arguments
+and options of each command. The output will be similar to what is above.
+
+When using `-v` with throne, you will be telling it to enable verbose mode. Verbose mode essentially enables debugging and shows you
+everything throne is trying to do/doing when you execute a command.
+
+```bash title='Example'
+[user@throne ~]$ throne -v bgp asn 59
+[2021-04-22 01:19:47,711] [DEBUG] [connectionpool.py:975] [_new_conn()] Starting new HTTPS connection (1): stat.ripe.net:443
+[2021-04-22 01:19:48,214] [DEBUG] [connectionpool.py:461] [_make_request()] https://stat.ripe.net:443 "GET /data/as-overview/data.json?resource=59 HTTP/1.1" 200 796
+[2021-04-22 01:19:48,215] [DEBUG] [asn_parser.py:30] [get_json()] Received HTTP/200 from https://stat.ripe.net/data/as-overview/data.json?resource=59, loading JSON data...
+---Basic ASN Info--
+AS#: 59
+Holder: WISC-MADISON-AS
+Announced: True
+---AS Block Info---
+AS Block: 1-1876
+Name: IANA 16-bit Autonomous System (AS) Numbers Registry
+Description: Assigned by ARIN
+[2021-04-22 01:19:48,217] [DEBUG] [connectionpool.py:975] [_new_conn()] Starting new HTTPS connection (1): rdap-bootstrap.arin.net:443
+[2021-04-22 01:19:48,515] [DEBUG] [connectionpool.py:461] [_make_request()] https://rdap-bootstrap.arin.net:443 "GET /bootstrap/autnum/59 HTTP/1.1" 302 0
+[2021-04-22 01:19:48,516] [DEBUG] [retry.py:576] [increment()] Incremented Retry for (url='https://rdap-bootstrap.arin.net/bootstrap/autnum/59'): Retry(total=2, connect=None, read=None, redirect=None, status=None)
+[2021-04-22 01:19:48,516] [INFO] [poolmanager.py:414] [urlopen()] Redirecting https://rdap-bootstrap.arin.net/bootstrap/autnum/59 -> https://rdap.arin.net/registry/autnum/59
+[2021-04-22 01:19:48,517] [DEBUG] [connectionpool.py:975] [_new_conn()] Starting new HTTPS connection (1): rdap.arin.net:443
+[2021-04-22 01:19:48,670] [DEBUG] [connectionpool.py:461] [_make_request()] https://rdap.arin.net:443 "GET /registry/autnum/59 HTTP/1.1" 200 5465
+[2021-04-22 01:19:48,671] [DEBUG] [asn_parser.py:30] [get_json()] Received HTTP/200 from https://rdap-bootstrap.arin.net/bootstrap/autnum/59, loading JSON data...
+[2021-04-22 01:19:48,674] [DEBUG] [asn_parser.py:62] [__init__()] Sending JSON to _RDAPASCommon to prepare parsing...
+[2021-04-22 01:19:48,674] [DEBUG] [asn_parser.py:75] [parse()] Setting handle from JSON response...
+[2021-04-22 01:19:48,674] [DEBUG] [asn_parser.py:85] [parse()] Trying to parse entity data based upon RIRs format...
+[2021-04-22 01:19:48,675] [DEBUG] [asn_parser.py:116] [parse()] ARIN detected as responding RIR...
+[2021-04-22 01:19:48,675] [DEBUG] [asn_parser.py:272] [parse()] Parsing ['fn', {}, 'text', 'University of Wisconsin Madison']...
+[2021-04-22 01:19:48,675] [DEBUG] [asn_parser.py:272] [parse()] Parsing ['adr', {'label': '1210 W Dayton\nB332\nMadison\nWI\n53706\nUnited States'}, 'text', ['', '', '', '', '', '', '']]...
+[2021-04-22 01:19:48,675] [DEBUG] [asn_parser.py:272] [parse()] Parsing ['kind', {}, 'text', 'org']...
+[2021-04-22 01:19:48,675] [DEBUG] [asn_parser.py:123] [parse()] Appending all parsed vCardArrays to vars['entities']...
+[2021-04-22 01:19:48,675] [DEBUG] [asn_parser.py:128] [parse()] ARIN likes to be special and nest entities, attempting to parse those...
+// output ommitted //
+---ARIN/AS59 Contact Information---
+University of Wisconsin Madison (Registrant):
+ Entity Address: 1210 W Dayton B332 Madison WI 53706 United States
+ Entity Phone: None
+ Entity Email: None
+Network Operations (Administrative):
+ Entity Address: Division of Information Technology 1210 West Dayton Street Madison WI 53706 United States
+ Entity Phone: +1-608-262-9030
+ Entity Email: hostadmin@doit.wisc.edu
+Network Operations Center (Abuse/Technical):
+ Entity Address: 1210 West Dayton Street B332 Madison WI 53706 United States
+ Entity Phone: +1-608-263-4188
+ Entity Email: noc@doit.wisc.edu
+```
