@@ -8,7 +8,7 @@ module.exports = {
     {
       type: "category",
       label: "Usage",
-      items: ["throne-cli", "throne-cli-bgp"]
+      items: ["throne-cli", "throne-cli-bgp", "throne-cli-ip"]
     },
     { type: "doc", id: "license" },
   ]
