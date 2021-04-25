@@ -21,7 +21,6 @@ module.exports = {
         alt: 'Throne Logo',
         src: 'img/throne-logo-vector.svg',
         srcDark: 'img/throne-gold-white-icon.png',
-        href: 'https://www.throne.dev/',
       },
       items: [
         {
