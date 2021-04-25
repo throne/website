@@ -25,6 +25,7 @@
   --ifm-color-primary-lighter: #f4c300;
   --ifm-color-primary-lightest: #ffd115;
   --ifm-color-darkmode-links: #ffffff;
+  --ifm-admonition-font-color: #000000;
   --ifm-code-font-size: 95%;
   --ifm-font-family-base: "Nunito", system-ui, -apple-system, Segoe UI, Roboto,
     Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI",
@@ -121,7 +122,7 @@ html[data-theme="dark"] {
 
 .admonition {
   --ifm-code-background: rgba(255, 255, 255, 0.5);
-  --ifm-code-color: var(--ifm-color-secondary-darkest);
+  --ifm-code-color: var(--ifm-admonition-font-color);
   --ifm-link-color: rgba(0, 0, 0, 0.5);
 }
 
