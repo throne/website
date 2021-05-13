@@ -12,10 +12,6 @@ module.exports = {
   organizationName: 'throne', // Usually your GitHub org/user name.
   projectName: 'throne-cli', // Usually your repo name.
   themeConfig: {
-    googleAnalytics: {
-      trackingID: ' UA-195280503-1',
-      anonymizeIP: true,
-    },
     navbar: {
       logo: {
         alt: 'Throne Logo',
@@ -49,7 +45,7 @@ module.exports = {
     },
     colorMode: {
       defaultMode: 'dark',
-      disableSwitch: false,
+      disableSwitch: true,
       respectPrefersColorScheme: false,
     },
   },
