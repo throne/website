@@ -49,6 +49,30 @@ sudo apt install -y git python3.6-dev python3-pip
 
 ### Throne Installation
 
+<Tabs
+  defaultValue="pypi"
+  values={[
+    { label: 'PyPi', value: 'pypi' },
+    { label: 'From Source', value: 'source' }]}>
+
+<TabItem value="pypi">
+
+You can install throne from PyPi using the command below.
+
+```bash
+pip install throne
+```
+
+:::caution Installing from PyPi
+When installing throne from PyPi to a WSL machine, you may need to add /home/$USER/local/.bin to your path variable.
+This can be done by doing `export PATH="/home/$USER/local/.bin:$PATH"`. Make sure to replace $USER with the username
+you're installing under on your system. Your system may not have the $USER variable set.
+:::
+
+</TabItem>
+
+<TabItem value="source">
+
 Once you have the prerequisites installed you can clone the repository
 
 ```bash
@@ -63,11 +87,16 @@ cd throne-cli
 ```bash
 pip3 setup.py .
 ```
-:::caution Installing using python
-When installing throne, ensure you're using `pip/pip3 setup.py .` and not `python/python3 setup.py install`.
+
+:::caution Installing from source
+When installing throne from source, ensure you're using `pip/pip3 setup.py .` and not `python/python3 setup.py install`.
 Running the latter will cause errors when attempting to run the `throne` command. If you do install
 using the python install version you can run the pip version afterwards to overwrite and resolve errors.
 :::
+
+</TabItem>
+
+</Tabs>
 
 ** Congratulations! ** 
 

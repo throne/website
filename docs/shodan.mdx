@@ -216,4 +216,37 @@ Anyway! Let's go through the output here and see what we're being provided secti
 - `---Shodan DNS Results---`
     - Under this header you can expect to find the domain you queried, the tags that Shodan has on the domain and the subdomains underneath.
 - `--X.com Records--`
-    - Each subdomain gets its own header notating the records associated with that subdomain. Within each of the `--Records--` headers you will find that it displays the type of record (A, MX, NS, CNAME, etc) and then under that the value, any ports opened and the time it was last seen by Shodan. 
+    - Each subdomain gets its own header notating the records associated with that subdomain. Within each of the `--Records--` headers you will find that it displays the type of record (A, MX, NS, CNAME, etc) and then under that the value, any ports opened and the time it was last seen by Shodan.
+
+
+### shodan search
+
+Using the `throne shodan search` command will allow you to search shodan for a specified IP address.
+
+For example, if you want to search for `1.1.1.1` you would use `throne shodan search 1.1.1.1`. This will then return formatted results from the Shodan API.
+
+```bash title="Example - search"
+[user@throne ~]$ throne shodan search 1.1.1.1 --all
+---Shodan Results For 1.1.1.1---
+Data Last Updated: 2021-05-18T03:00:08.191906
+ASN: AS13335
+ISP: Cloudflare, Inc.
+Location: Miami, FL, US
+ Lat/Long: 25.7867, -80.18
+Domain(s): one.one
+Hostname(s): one.one.one.one
+Port(s): 80, 53
+Found Protocols: dns-udp, http
+--dns-udp Information--
+IP: 1.1.1.1
+Port: 53
+Hostnames: one.one.one.one
+Domains: one.one
+--http Information--
+IP: 1.1.1.1
+Port: 80
+Hostnames: one.one.one.one
+Domains: one.one
+```
+
+throne is parsing any found services, protocols, ports, etc from the IP addresses result and will display it in a user readable format to you. Your results will look similar to above but may not be exact.

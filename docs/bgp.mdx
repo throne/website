@@ -109,7 +109,7 @@ Some of these details may be filtered by RIPE. To verify this information please
 As we can see in the example above, with a RIPE issued ASN we only see the abuse contact information along with the warning that
 throne will provide you when RIPE is detected.
 
-### bgp look
+### bgp lg
 
 This is one of my favorite commands that was able to get implemented into throne. I can't tell you how many times I've needed
 to look at the [HE.net BGP Looking Glass](http://lg.he.net/) to see if I had routes being advertised properly. Having the ability
@@ -117,8 +117,8 @@ to have a looking glass available at a moments notice via command line, at least
 at how this command works.
 
 ```bash title="Help"
-[user@throne ~]$ throne bgp look --help
-Usage: throne bgp look [OPTIONS] ADDRESS_OR_PREFIX
+[user@throne ~]$ throne bgp lg --help
+Usage: throne bgp lg [OPTIONS] ADDRESS_OR_PREFIX
 
   BGP looking glass information based upon provided address or prefix
 
@@ -128,7 +128,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-We have one available option and an argument that is needed when using `throne bgp look`. 
+We have one available option and an argument that is needed when using `throne bgp lg`. 
 
 - --location X
     - Here we can specify what location we want to query the address or prefix out of. On throne we can query out of
@@ -138,10 +138,10 @@ We have one available option and an argument that is needed when using `throne b
 It is okay to ** NOT ** specify a location, just know that if you don't put one by default throne will query US-NY.
 
 We also must specify an address or prefix so that we tell the looking glass exactly what to query. Let's see what we
-can get out of the `throne bgp look` command.
+can get out of the `throne bgp lg` command.
 
 ```bash title="Example"
-[user@throne ~]$ throne bgp look 1.1.1.1
+[user@throne ~]$ throne bgp lg 1.1.1.1
 Peer: 198.32.160.12
  Peer Location: New York City, New York, US
 ---
@@ -155,7 +155,7 @@ prefix that the IP is apart of and the AS path.
 Let's query Frankfurt and see what that router is seeing for `1.1.1.1`.
 
 ```bash title="Example - Location Specified"
-[user@throne ~]$ throne bgp look 1.1.1.1 --location DE
+[user@throne ~]$ throne bgp lg 1.1.1.1 --location DE
 Peer: 2001:7f8::30b6:0:1
  Peer Location: Frankfurt, Germany
 ---
@@ -169,7 +169,7 @@ what information it sees for `1.1.1.1`.
 Oh don't worry, you can query prefixes as well!
 
 ```bash title="Example - Prefix Specified"
-[user@throne ~]$ throne bgp look 8.8.8.0/24
+[user@throne ~]$ throne bgp lg 8.8.8.0/24
 Peer: 198.32.160.12
  Peer Location: New York City, New York, US
 ---

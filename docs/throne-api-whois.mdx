@@ -1,0 +1,108 @@
+---
+id: throne-api-whois
+title: Using the WHOIS query
+sidebar_label: GET - WHOIS
+description: Getting WHOIS related information
+---
+
+### Getting Started
+
+Getting started with our throne WHOIS API is pretty straight forward. You just need to send a `GET` request to `https://api.throne.dev/api/whois?domain=XXXXXXX`
+
+### Returned Results
+
+The results returned from the throne WHOIS API will be returned in a format that should be very easy to parse compared to a normal RDAP query. Lets take a look at what results get returned when we query for amazon.com. 
+
+Endpoint: `https://api.throne.dev/api/whois?domain=amazon.com`
+
+```title=Example - WHOIS Query - amazon.com
+{
+    "handle": "281209_DOMAIN_COM-VRSN",
+    "domain": "amazon.com",
+    "registrar_rdap": "https://rdap.markmonitor.com/rdap/domain/amazon.com",
+    "status": [
+        "client update prohibited",
+        "client transfer prohibited",
+        "client delete prohibited",
+        "server update prohibited",
+        "server transfer prohibited",
+        "server delete prohibited"
+    ],
+    "registrar": {
+        "name": "MarkMonitor Inc.",
+        "role": "registrar",
+        "iana_id": "292",
+        "contact_info": {
+            "abuse": [
+                {
+                    "phone": "+1.2083895740",
+                    "email": "abusecomplaints@markmonitor.com"
+                }
+            ]
+        }
+    },
+    "whois": {
+        "domain": "amazon.com",
+        "nameservers": [
+            "ns1.p31.dynect.net",
+            "ns2.p31.dynect.net",
+            "ns3.p31.dynect.net",
+            "ns4.p31.dynect.net",
+            "pdns1.ultradns.net",
+            "pdns6.ultradns.co.uk"
+        ],
+        "dnssec": [
+            {
+                "signed": false,
+                "dsData": []
+            }
+        ],
+        "contact_info": {
+            "administrative": [
+                {
+                    "name": "Hostmaster, Amazon Legal Dept.",
+                    "org": "Amazon Technologies, Inc.",
+                    "address": "P.O. Box 8102, Reno, NV, 89507, US",
+                    "phone": "+1.2062667010",
+                    "email": "hostmaster@amazon.com"
+                }
+            ],
+            "registrant": [
+                {
+                    "name": "Hostmaster, Amazon Legal Dept.",
+                    "org": "Amazon Technologies, Inc.",
+                    "address": "P.O. Box 8102, Reno, NV, 89507, US",
+                    "phone": "+1.2062667010",
+                    "email": "hostmaster@amazon.com"
+                }
+            ],
+            "technical": [
+                {
+                    "name": "Hostmaster, Amazon Legal Dept.",
+                    "org": "Amazon Technologies, Inc.",
+                    "address": "P.O. Box 8102, Reno, NV, 89507, US",
+                    "phone": "+1.2062667010",
+                    "email": "hostmaster@amazon.com"
+                }
+            ],
+            "registrar": [
+                {
+                    "name": null,
+                    "org": "MarkMonitor Inc.",
+                    "address": "3540 E Longwing Ln, Meridian, ID, 83646, US",
+                    "phone": null,
+                    "email": null
+                }
+            ]
+        },
+        "registration_info": {
+            "expiration": "2024-10-30T07:00:00.000+0000",
+            "registration": "1994-11-01T05:00:00.000+0000",
+            "last update": "2019-08-26T19:19:56.000+0000",
+            "last update of RDAP database": "2021-05-18T03:55:29.000+0000"
+        }
+    }
+}
+```
+
+You may do what you wish with the results that are returned, we created this primarily for [our WHOIS module](/docs/throne-cli-whois) but have decided to make it public. Eventually we plan on making the source code for the API public but at the moment it's a bit dirty.
