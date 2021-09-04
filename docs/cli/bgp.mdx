@@ -1,0 +1,213 @@
+---
+id: bgp
+title: Using the BGP module
+sidebar_label: throne bgp
+description: Using the bgp module within throne
+---
+
+thrones BGP module has some handy things that it can do. It can get RIR information for a specified AS# or IP/prefix, and it can check
+BGP looking glasses around the globe so you can see if the path that's being taken for a IP or prefix.
+
+```bash
+[user@throne ~]$ throne bgp --help
+Usage: throne bgp [OPTIONS] COMMAND [ARGS]...
+
+  Retrieve BGP related information.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  asn     Gets information on the specified AS number.
+  look    BGP looking glass information based upon provided address or...
+  prefix  Gets prefix information for specified prefix or ip address.
+```
+
+### bgp asn
+
+Starting with the command within the `asn` command within the `bgp` module of thone. You'll need to specify an ASN to get relevant information
+as per the help information of the module.
+
+```bash title="Help"
+[user@throne ~]$ throne bgp asn --help
+Usage: throne bgp asn [OPTIONS] ASNUM
+
+  Gets information on the specified AS number.
+
+Options:
+  --help  Show this message and exit.
+```
+
+```bash title="Example"
+[user@throne ~]$ throne bgp asn 59
+---Basic ASN Info--
+AS#: 59
+Holder: WISC-MADISON-AS
+Announced: True
+---AS Block Info---
+AS Block: 1-1876
+Name: IANA 16-bit Autonomous System (AS) Numbers Registry
+Description: Assigned by ARIN
+---ARIN/AS59 Contact Information---
+University of Wisconsin Madison (Registrant):
+ Entity Address: 1210 W Dayton B332 Madison WI 53706 United States
+ Entity Phone: None
+ Entity Email: None
+Network Operations (Administrative):
+ Entity Address: Division of Information Technology 1210 West Dayton Street Madison WI 53706 United States
+ Entity Phone: +1-608-262-9030
+ Entity Email: hostadmin@doit.wisc.edu
+Network Operations Center (Technical/Abuse):
+ Entity Address: 1210 West Dayton Street B332 Madison WI 53706 United States
+ Entity Phone: +1-608-263-4188
+ Entity Email: noc@doit.wisc.edu
+```
+
+Let's dive into our example and go though it line by line to see what throne is providing us.
+
+- Basic ASN Info
+    - AS# - The query we made
+    - Holder - Name of the ASN within its RIR
+    - Announced - If the ASN is being used for advertisement
+- AS Block Info
+    - AS Block - The original block of AS#'s this was provided out of
+    - Name: The name of the AS block this originated from
+    - Description: Typically will contain `Assigned by X` with X being the RIR who IANA assigned the AS block to
+- Contact Information
+    - X(ROLE): - In our example we see `University of Wisconsin Madison (Registrant)`, `Network Operations (Administrative)` and
+    `Network Operations Center (Technical/Abuse)`. throne will parse the readable name of each contact and their role and provide
+    it as a header for the group/individual.
+    - Entity Address: The address the RIR has on-file for the contact
+    - Entity Phone: The phone number the RIR has on-file for the contact
+    - Entity Email: The email the RIR has on-file for the contact
+
+:::caution RIPE Contact Information
+Please note that RIPE does filter out non-abuse contact information from their RDAP API. throne will produce a warning
+when it detects RIPE as the RIR to notify you that the details/results may be filtered. To get full contact information
+you will need to go to query the [RIPE database](https://apps.db.ripe.net/db-web-ui/query) directly.
+:::
+
+```bash title="Example - RIPE"
+[user@throne ~]$ throne bgp asn 2792
+---Basic ASN Info--
+AS#: 2792
+Holder: TERASTREAM-AS - Deutsche Telekom AG
+Announced: True
+---AS Block Info---
+AS Block: 2773-2822
+Name: IANA 16-bit Autonomous System (AS) Numbers Registry
+Description: Assigned by RIPE NCC
+---RIPE/AS2792 Contact Information---
+Deutsche Telekom LIR Abuse Contact (Abuse):
+ Entity Address: Deutsche Telekom AG
+ Entity Phone: None
+ Entity Email: auftrag@nic.telekom.de
+
+Some of these details may be filtered by RIPE. To verify this information please visit https://apps.db.ripe.net/db-web-ui/query.
+```
+
+As we can see in the example above, with a RIPE issued ASN we only see the abuse contact information along with the warning that
+throne will provide you when RIPE is detected.
+
+### bgp lg
+
+This is one of my favorite commands that was able to get implemented into throne. I can't tell you how many times I've needed
+to look at the [HE.net BGP Looking Glass](http://lg.he.net/) to see if I had routes being advertised properly. Having the ability
+to have a looking glass available at a moments notice via command line, at least for me has been very helpful. Let's take a look
+at how this command works.
+
+```bash title="Help"
+[user@throne ~]$ throne bgp lg --help
+Usage: throne bgp lg [OPTIONS] ADDRESS_OR_PREFIX
+
+  BGP looking glass information based upon provided address or prefix
+
+Options:
+  --location [US-NY|US-FL|US-CA|UK|NL|SG|DE|ZA|JP]
+                                  Looking Glass Location  [default: (US-NY)]
+  --help                          Show this message and exit.
+```
+
+We have one available option and an argument that is needed when using `throne bgp lg`. 
+
+- --location X
+    - Here we can specify what location we want to query the address or prefix out of. On throne we can query out of
+    New York (US-NY), Miami (US-FL), Palo Alto (US-CA), London (UK), Amsterdam (NL), Singapone (SG), Frankfurt (DE),
+    Johannesburg (ZA), and Tokyo (JP).
+
+It is okay to ** NOT ** specify a location, just know that if you don't put one by default throne will query US-NY.
+
+We also must specify an address or prefix so that we tell the looking glass exactly what to query. Let's see what we
+can get out of the `throne bgp lg` command.
+
+```bash title="Example"
+[user@throne ~]$ throne bgp lg 1.1.1.1
+Peer: 198.32.160.12
+ Peer Location: New York City, New York, US
+---
+Origin AS: 13335
+ Prefix: 1.1.1.0/24
+ AS Path: 199524 13335
+```
+throne will provide us the peer IP and location that the route server is seeing the route from, the origin AS number, the advertised
+prefix that the IP is apart of and the AS path.
+
+Let's query Frankfurt and see what that router is seeing for `1.1.1.1`.
+
+```bash title="Example - Location Specified"
+[user@throne ~]$ throne bgp lg 1.1.1.1 --location DE
+Peer: 2001:7f8::30b6:0:1
+ Peer Location: Frankfurt, Germany
+---
+Origin AS: 13335
+ Prefix: 1.1.1.0/24
+ AS Path: 12470 174 13335
+ ```
+We can see that by specifying `--location DE` at the end of the command we were now able to query the Frankfurt peer and grab
+what information it sees for `1.1.1.1`. 
+
+Oh don't worry, you can query prefixes as well!
+
+```bash title="Example - Prefix Specified"
+[user@throne ~]$ throne bgp lg 8.8.8.0/24
+Peer: 198.32.160.12
+ Peer Location: New York City, New York, US
+---
+Origin AS: 15169
+ Prefix: 8.8.8.0/24
+ AS Path: 199524 15169
+```
+
+### bgp prefix
+
+Just like you can with AS numbers, you can get information about prefixes or IP addresses using `throne bgp prefix`.
+
+```bash title="Help"
+[user@throne ~]$ throne bgp prefix --help
+Usage: throne bgp prefix [OPTIONS] ADDRESS_OR_PREFIX
+
+  Gets prefix information for specified prefix or ip address.
+
+Options:
+  --help  Show this message and exit.
+```
+
+There isn't any additional options for this command but you'll need to specify an address or a prefix to get information on.
+
+```bash title="Example"
+[user@throne ~]$ throne bgp prefix 8.8.8.0/24
+Prefix: 8.8.8.0/24
+ Announced By: 15169
+ Holder: GOOGLE
+---
+IP Block: 8.0.0.0/8
+ Name: IANA IPv4 Address Space Registry
+ Description: Administered by ARIN
+```
+
+Looking at the output above, throne is telling us the prefix that our query is advertised under, who the prefix is announced by (AS & Holder),
+as well as the original IANA IP block information and who it's administrated/assigned by. In this case 8.0.0.0/8 is administered by ARIN.
+
+If we want to query an IP address we just replace `8.8.8.0/24` with an IP such as `8.8.8.8`. This will give us the exact same information.
+When you query a specific IP it will tell you the prefix it is advertised out of, who it's announced by and the original IANA IP block
+information.

@@ -1,0 +1,20 @@
+---
+id: api
+title: Getting Started with the throne API
+sidebar_label: Getting Started
+description: Getting Started with the throne API
+---
+
+Ahh, so you're interested in using our API huh? Well lucky for you it's public, however credentials are required. You can register by [clicking here](https://api.throne.dev/auth/login).
+
+All API queries will need to be sent to `api.throne.dev`. All API requests require an `Authorization` header with a bearer token. This bearer token care be retrieved by doing a post request to https://api.throne.dev/auth/login.
+
+A list of our endpoints are below:
+### Authentication
+* [GET - `/auth/login`](https://api.throne.dev/auth/login)
+* POST - /auth/login
+
+### WHOIS Queries
+* [GET - `/whois/asn`](/docs/api/asn)
+* [GET - `/whois/domain`](/docs/api/whois)
+* [GET - `/whois/ip`](/docs/api/ip)

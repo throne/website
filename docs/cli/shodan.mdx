@@ -1,0 +1,252 @@
+---
+id: shodan
+title: Using the Shodan module
+sidebar_label: throne shodan
+description: Using the Shodan module within throne
+---
+:::caution API KEY REQUIRED!
+A Shodan API key is required to use this module. Please visit [Shodan](https://www.shodan.io/) to register for an account and get a free API key. Shodan also has paid API plans located [here](https://account.shodan.io/billing).
+:::
+
+Introduced in v0.2.0, the Shodan module will allow you to interact with the Shodan API. The functionality as of writing this is limited but will expand in the future to hopefully cover the entire Shodan API.
+
+```bash title="Help"
+[user@throne ~]$ throne shodan
+Usage: throne shodan [OPTIONS] COMMAND [ARGS]...
+
+  Retrieve information from Shodan.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  dns     Host to IP, IP to Host, Domain DNS information.
+  info    Return information about the plan belonging to
+  myip    Get your current public IP address.
+  setapi  Use this command to set your Shodan API key.
+```
+:::info First time using the shodan module
+When running `throne shodan` for the first time be sure to set your Shodan API key using `throne shodan setapi`.
+This will prompt you for your API key and it will get stored in a configuration file. Additional detail is below
+under the `shodan setapi` section.
+:::
+
+### shodan setapi
+
+This should be the ** FIRST ** command you run, before using the rest of the throne module. 
+
+`throne shodan setapi` will allow you to configure your Shodan API key for use with throne. When running this command, the module will check for the existance of a `.throne` folder in your home directory. If the folder doesn't exist, it will automatically create it. After creation it will prompt you for your API key with `Enter your Shodan API Key:`. 
+
+Upon entering your API key, it will get saved into the `.throne` folder into a `config.yml` file. The full path for this file is `/home/{USER}/.throne/config.yml`.
+
+```bash title="Example - setapi"
+[user@throne ~]$ throne shodan setapi
+Enter Shodan API Key: ThisIsMySuperAwesomeShodanAPIKey
+[user@throne ~]$ cat /home/user/.throne/config.yml
+{shodan_key: ThisIsMySuperAwesomeShodanAPIKey}
+```
+
+### shodan myip
+
+The simpliest of modules, yet so ✨elegant✨.  No more needing to google "What's my IP" or something of the sorts, just use throne and shodan to do it for you!
+
+```bash title="Example - myip"
+[user@throne ~]$ throne shodan myip
+---Public IP Address---
+123.456.789.101
+```
+
+### shodan info
+
+With the Shodan API, you do have a limit of the number of queries you can run. This is dictated by the plan you have with Shodan. Running `throne shodan info` will get your API limits, what you've used and what you have left.
+
+```bash title="Example - info"
+[user@throne ~]$ throne shodan info
+---Shodan API Info---
+Shodan API Plan: The Cooliest of Plans 😎
+Total Scan Credits: 65536
+ Used Credits: 3
+ Unused Credits: 65533
+Total Query Credits 200000
+ Used Credits: 579
+ Unused Credits: 199421
+Monitored IPs: 9
+ Monitored IP Limit: 131072
+Unlocked: True
+ Unlocked Left: 199421
+```
+
+Taking a look at the output above we see exactly what we've used, what's left and what our totals are between scan and query credits. If you're monitoring any IPs, those counts will show up as well!
+
+### shodan dns
+
+Alright...let me level set with everyone. This module...was...such...a...giant...PITA! Nonetheless, it's working! It might not be the cleanest code out of all the modules but it does what it's supposed to do. It's surprisngly fast for even the largest domains.
+
+Now with `thone shodan dns` you ** HAVE ** to specify a query type. There's 3 different query types available for DNS on Shodan; `resolve`, `reverse` and `domain`. These 3 query types are also available on throne and can be chosen by using the option `--query-type` or `-q` on the end of your command or in front of the argument. I personally prefer at the end, but to each their own.
+
+The `resolve` and `reverse` types do support multiple arguments, well really unlimited arguments. I'll demonstrate with a few below.
+
+Also note there is a `--raw`/`-r` option with the `throne shodan` module. This will allow you to output just the raw JSON that throne uses to provide the parsed output. Feel free to take that and do with it what you will.
+
+```bash title="Help - shodan dns"
+[user@throne ~]$ throne shodan dns --help
+Usage: throne shodan dns [OPTIONS] query
+
+  Host to IP, IP to Host, DNS information.
+
+Options:
+  -q, --query-type [resolve|reverse|domain]
+                                  Query type: Resolve DNS, Resolve Reverse
+                                  DNS, or Get Domain Information
+  -r, --raw
+  --help                          Show this message and exit.
+```
+
+Lets start out with the `resolve` type.
+
+```bash title="Example - resolve"
+[user@throne ~]$ throne shodan dns google.com cloudflare.com throne.dev github.com microsoft.com azure.com --query-type resolve
+---Shodan DNS Results---
+azure.com resolves to 40.74.133.20
+throne.dev resolves to 172.67.150.150
+google.com resolves to 216.58.194.206
+microsoft.com resolves to 104.215.148.63
+cloudflare.com resolves to 104.16.133.229
+github.com resolves to 192.30.255.113
+```
+
+Very simple query output, it tells you the domain and what it resolves to. Keep in mind some domains have multiple A records at the root, you may see this change between runs.
+
+Lets now take a look at `reverse`, again this can take multiple arguments.
+
+```bash title="Example - reverse"
+[user@throne ~]$ throne shodan dns 1.1.1.1 8.8.8.8 208.67.222.222 208.67.220.220 4.2.2.2 172.67.150.150 --query-type reverse
+---Shodan DNS Results---
+4.2.2.2 resolves to b.resolvers.Level3.net
+208.67.222.222 resolves to resolver1.opendns.com
+1.1.1.1 resolves to one.one.one.one
+208.67.220.220 resolves to resolver2.opendns.com
+8.8.8.8 resolves to dns.google
+172.67.150.150 resolves to None
+```
+
+So taking a look at the output above we see IPs that have PTR records setup for reverse DNS. 
+
+If you take a look at the `172.67.150.150` entry, we can see that it says that it resolves to `None`. That isn't because throne or Shodan couldn't find it, it's because [Cloudflare](https://bgp.he.net/ip/172.67.150.150#_ipinfo) doesn't have a PTR record associated with that IP address, that's okay! Expect to see some `None` entries when using the `reverse` query type.
+
+Now let's take a look at the real meat and potatos of the `throne shodan dns` module.....the `domain` query.
+
+```bash title="Example - domain"
+[user@throne ~]$ throne shodan dns discord.com --query-type domain
+---Shodan DNS Results---
+Domain: discord.com
+Shodan Tags: dmarc, google-verified, spf
+Subdomains: _dmarc.discord.com, blog.discord.com, safety.discord.com, status.discord.com, support.discord.com, support-dev.discord.com, www.discord.com
+--discord.com Records--
+A Records:
+ Value: 162.159.135.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 8080, 8443, 8880 | Last Seen: 2021-04-25T03:20:12.963693+00:00
+ Value: 162.159.128.233 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 2096, 8080, 8443, 8880 | Last Seen: 2021-04-25T03:20:13.025502+00:00
+ Value: 162.159.138.232 | Ports Opened: 80, 443, 2053, 2082, 2083, 2086, 2087, 2095, 8080, 8443, 8880 | Last Seen: 2021-04-25T03:20:12.961373+00:00
+ Value: 162.159.136.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 8080, 8443, 8880 | Last Seen: 2021-04-25T03:20:13.065826+00:00
+ Value: 162.159.137.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 8080, 8443, 8880 | Last Seen: 2021-04-25T03:20:12.957309+00:00
+MX Records:
+ Value: aspmx2.googlemail.com | Last Seen: 2021-04-19T03:35:48.017227+00:00
+ Value: aspmx.l.google.com | Last Seen: 2021-04-19T03:35:48.009182+00:00
+ Value: alt1.aspmx.l.google.com | Last Seen: 2021-04-19T03:35:48.011699+00:00
+ Value: alt2.aspmx.l.google.com | Last Seen: 2021-04-19T03:35:48.014178+00:00
+ Value: aspmx3.googlemail.com | Last Seen: 2021-04-19T03:35:48.021716+00:00
+NS Records:
+ Value: gabe.ns.cloudflare.com | Last Seen: 2021-04-19T03:35:47.978817+00:00
+ Value: sima.ns.cloudflare.com | Last Seen: 2021-04-19T03:35:47.984766+00:00
+TXT Records:
+ Value: google-site-verification=AkZq_nCggw5fS3x2crQxF9I_9MEdqqWIVB-mutOiFzw | Last Seen: 2021-04-19T03:35:47.988921+00:00
+ Value: google-site-verification=_kQ_IPg2B1pYFXLv22nmgWshupdp4rK3xBnMQEvY88s | Last Seen: 2021-04-19T03:35:47.998605+00:00
+ Value: v=spf1 include:_spf.google.com include:mail.zendesk.com include:sendgrid.net include:3885857.spf06.hubspotemail.net ip4:198.2.180.60 -all | Last Seen: 2021-04-19T03:35:47.993106+00:00
+ Value: google-site-verification=4lTw99D7TJimzNkaj9WtUoOpZoXad73hmD4WgR7COH4 | Last Seen: 2021-04-19T03:35:47.996131+00:00
+ Value: google-site-verification=P3cQmz_2xQ17u5qOBHf7JIAYGq3HzDq0UtEkbOR6ZjQ | Last Seen: 2021-04-19T03:35:48.001862+00:00
+ Value: google-site-verification=Xos4rv9-rY3aGpQ6FtxhUC_Buhef0wF88_4rB4HmTZI | Last Seen: 2021-04-19T03:35:48.005234+00:00
+SOA Records:
+ Value: gabe.ns.cloudflare.com | Last Seen: 2021-04-19T03:35:48.036085+00:00
+--_dmarc.discord.com Records--
+TXT Records:
+ Value: v=DMARC1; p=reject; rua=mailto:dmarc@discord.com | Last Seen: 2021-04-19T03:35:47.974294+00:00
+--blog.discord.com Records--
+A Records:
+ Value: 52.1.147.205 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.736152+00:00
+ Value: 52.6.3.192 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.724993+00:00
+ Value: 52.4.225.124 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.768872+00:00
+ Value: 52.1.173.203 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.764609+00:00
+ Value: 52.4.240.221 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.745625+00:00
+ Value: 52.4.175.111 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.750903+00:00
+ Value: 52.0.16.118 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.756448+00:00
+ Value: 52.5.181.79 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.729119+00:00
+ Value: 52.4.38.70 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.733663+00:00
+ Value: 52.6.46.142 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.740219+00:00
+ Value: 52.1.119.170 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.760254+00:00
+ Value: 52.4.145.119 | Ports Opened: 80, 443 | Last Seen: 2021-04-23T21:10:22.721315+00:00
+--safety.discord.com Records--
+CNAME Records:
+ Value: discordsafetyportal.zendesk.com | Last Seen: 2021-04-23T20:54:40.769285+00:00
+--status.discord.com Records--
+A Records:
+ Value: 162.159.135.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 8080, 8443, 8880 | Last Seen: 2021-04-24T05:24:31.521218+00:00
+ Value: 162.159.138.232 | Ports Opened: 80, 443, 2053, 2082, 2083, 2086, 2087, 2095, 8080, 8443, 8880 | Last Seen: 2021-04-24T05:24:31.530002+00:00
+ Value: 162.159.136.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 8080, 8443, 8880 | Last Seen: 2021-04-24T05:24:31.526618+00:00
+ Value: 162.159.128.233 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 2096, 8080, 8443, 8880 | Last Seen: 2021-04-24T05:24:31.509710+00:00
+ Value: 162.159.137.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 8080, 8443, 8880 | Last Seen: 2021-04-24T05:24:31.515912+00:00
+--support.discord.com Records--
+CNAME Records:
+ Value: hammerandchisel.zendesk.com | Last Seen: 2021-04-24T04:25:54.054893+00:00
+--support-dev.discord.com Records--
+CNAME Records:
+ Value: discorddevs.zendesk.com | Last Seen: 2021-04-24T04:25:54.613451+00:00
+--www.discord.com Records--
+A Records:
+ Value: 162.159.136.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 8080, 8443, 8880 | Last Seen: 2021-04-13T21:50:07.335358+00:00
+ Value: 162.159.137.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 8080, 8443, 8880 | Last Seen: 2021-04-13T21:50:07.335358+00:00
+ Value: 162.159.138.232 | Ports Opened: 80, 443, 2053, 2082, 2083, 2086, 2087, 2095, 8080, 8443, 8880 | Last Seen: 2021-04-13T21:50:07.335358+00:00
+ Value: 162.159.128.233 | Ports Opened: 80, 443, 2082, 2083, 2086, 2087, 2096, 8080, 8443, 8880 | Last Seen: 2021-04-13T21:50:07.335358+00:00
+ Value: 162.159.135.232 | Ports Opened: 80, 443, 2082, 2083, 2086, 8080, 8443, 8880 | Last Seen: 2021-04-13T21:50:07.335358+00:00
+```
+
+Yeah...I wasn't kidding. It's a lot! So this `domain` query was very very interesting to get running just the way I wanted it. It displays and parses exactly how I pictured it would but I think the code is a little dirty.
+
+Anyway! Let's go through the output here and see what we're being provided section by section.
+
+- `---Shodan DNS Results---`
+    - Under this header you can expect to find the domain you queried, the tags that Shodan has on the domain and the subdomains underneath.
+- `--X.com Records--`
+    - Each subdomain gets its own header notating the records associated with that subdomain. Within each of the `--Records--` headers you will find that it displays the type of record (A, MX, NS, CNAME, etc) and then under that the value, any ports opened and the time it was last seen by Shodan.
+
+
+### shodan search
+
+Using the `throne shodan search` command will allow you to search shodan for a specified IP address.
+
+For example, if you want to search for `1.1.1.1` you would use `throne shodan search 1.1.1.1`. This will then return formatted results from the Shodan API.
+
+```bash title="Example - search"
+[user@throne ~]$ throne shodan search 1.1.1.1 --all
+---Shodan Results For 1.1.1.1---
+Data Last Updated: 2021-05-18T03:00:08.191906
+ASN: AS13335
+ISP: Cloudflare, Inc.
+Location: Miami, FL, US
+ Lat/Long: 25.7867, -80.18
+Domain(s): one.one
+Hostname(s): one.one.one.one
+Port(s): 80, 53
+Found Protocols: dns-udp, http
+--dns-udp Information--
+IP: 1.1.1.1
+Port: 53
+Hostnames: one.one.one.one
+Domains: one.one
+--http Information--
+IP: 1.1.1.1
+Port: 80
+Hostnames: one.one.one.one
+Domains: one.one
+```
+
+throne is parsing any found services, protocols, ports, etc from the IP addresses result and will display it in a user readable format to you. Your results will look similar to above but may not be exact.

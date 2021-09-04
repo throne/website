@@ -1,0 +1,59 @@
+---
+id: api
+title: Using the API module
+sidebar_label: throne api
+description: Using the api module within throne
+---
+
+Starting in v0.4.0, the API module has been introduced. This allows you to authenticate to the throne API to perform functions such as WHOIS, ASN and IP lookups.
+
+Also starting in v0.4.0, authentication is required to perform some functions, you will need to authenticate using this module for certain items to work.
+
+```bash
+[user@throne ~]$ throne api --help
+Usage: throne api [OPTIONS] COMMAND [ARGS]...
+
+  Retrieve API keys from the throne API
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  setapi  Use this command to login to the throne API and set your API key
+```
+
+### api setapi
+
+Using `throne api setapi` you can retrieve your key from our authentication servers. This is in the form of a Bearer token, this command will automatically create our config file and set your Bearer token within the file.
+
+You may run this command directly and be prompted for credentials OR you can use options. See both examples below.
+
+```bash title="Prompt"
+[user@throne ~]$ throne api setapi
+Username: testuser@throne.dev
+Password: 
+Do you wish to set a scope? (Y/N): N
+Successfully set throne API key.
+```
+
+:::caution API Scopes
+Unless you've already been instructed by throne to use a scope, always choose N (or n) when being prompted for scope. If you choose Y (or y) and set a scope it will have no effect.
+:::
+
+```bash title="Options"
+[user@throne ~]$ throne api setapi -u testuser@throne.dev -p Sup3rS3cr3tS3cur3P@55w0rd!
+Successfully set throne API key.
+```
+
+While using options, if you have a scope it may be set by using the `-s` option.
+
+### Configuration File 
+
+As used with the Shodan module, we upon running this command we create a `.throne` folder in your home directory which will contain a config.yml file. This file will contain your throne API key when set as well as your Shodan API key when set (if applicable).
+
+```YAML title="Example Config File"
+throne_key: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Inp1Z3RDRWtPM2hvNVIwM3YxbHJZeSJ9eyJpc3MiOiJodHRwczovL3Rocm9uZS1wcm9kLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2MTI3YjE1YjhmYzRiYTAwNzFDExN2EiLCJhdWQiOiJodHRwczovL2FwaS50aHJvbmUuZGV2IiwiaWF0IjoxNjMwNDMxNTAxLCJl
+shodan_key: MoRz6z4psAP0GMqiPXv3iSHqUUuzWFuq
+```
+
+This configuration file may be changed as you see fit however commands within the CLI tool may overwrite any changes you manually make to the file. We advise __NOT__ changing this file manually.

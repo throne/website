@@ -1,0 +1,115 @@
+---
+id: ip
+title: Using the IP query
+sidebar_label: GET - /whois/ip
+description: Getting IP related information
+---
+
+### Getting Started
+
+You just need to send a `GET` request to our IP query endpoint.
+
+Public IP Address/Subnets: `https://api.throne.dev/whois/ip?query=XXXXXXX`
+
+### Returned Results
+
+The results returned from the throne IP API will be returned in a format that should be very easy to parse compared to a normal RDAP query. Lets take a look at what results get returned when we query for 1.1.1.1. 
+
+Endpoint: `https://api.throne.dev/whois/ip?query=1.1.1.1`
+
+```API Output title="Example - IP Query - 1.1.1.1"
+{
+  "rir": "APNIC",
+  "handle": "1.1.1.0 - 1.1.1.255",
+  "startAddress": "1.1.1.0",
+  "endAddress": "1.1.1.255",
+  "cidr": "1.1.1.0/24",
+  "ipVersion": "v4",
+  "name": "APNIC-LABS",
+  "type": "ASSIGNED PORTABLE",
+  "entities": [
+    {
+      "handle": "IRT-APNICRANDNET-AU",
+      "name": "IRT-APNICRANDNET-AU",
+      "kind": "group",
+      "address": "PO Box 3646 South Brisbane, QLD 4101 Australia",
+      "phone": null,
+      "email": "helpdesk@apnic.net",
+      "roles": [
+        "abuse"
+      ]
+    },
+    {
+      "handle": "AR302-AP",
+      "name": "APNIC RESEARCH",
+      "kind": "group",
+      "address": "PO Box 3646 South Brisbane, QLD 4101 Australia",
+      "phone": "+61-7-3858-3199",
+      "email": "research@apnic.net",
+      "roles": [
+        "administrative",
+        "technical"
+      ]
+    }
+  ]
+}
+```
+
+You can also perform queries for whole subnets.
+
+:::caution Quering Subnets
+To properly query a subnet you already need to know the CIDR notation of the subnet. If you attempt to query a subnet with an incorrect CIDR notation you will receive an `invalid_query` error.
+:::
+
+```API Output title="Example - Subnet Query - 8.8.8.0/24"
+{
+    "rir": "ARIN",
+    "handle": "NET-8-8-8-0-1",
+    "startAddress": "8.8.8.0",
+    "endAddress": "8.8.8.255",
+    "cidr": "8.8.8.0/24",
+    "ipVersion": "v4",
+    "name": "LVLT-GOGL-8-8-8",
+    "type": "ALLOCATION",
+    "entities": [
+        {
+            "handle": "GOGL",
+            "name": "Google LLC",
+            "kind": "org",
+            "address": "1600 Amphitheatre Parkway Mountain View CA 94043 United States",
+            "phone": null,
+            "email": null,
+            "roles": [
+                "registrant"
+            ]
+        },
+        {
+            "handle": "ABUSE5250-ARIN",
+            "name": "Abuse",
+            "kind": "group",
+            "address": "1600 Amphitheatre Parkway Mountain View CA 94043 United States",
+            "phone": "+1-650-253-0000",
+            "email": "network-abuse@google.com",
+            "roles": [
+                "abuse"
+            ]
+        },
+        {
+            "handle": "ZG39-ARIN",
+            "name": "Google LLC",
+            "kind": "group",
+            "address": "1600 Amphitheatre Parkway Mountain View CA 94043 United States",
+            "phone": "+1-650-253-0000",
+            "email": "arin-contact@google.com",
+            "roles": [
+                "administrative",
+                "technical"
+            ]
+        }
+    ]
+}
+```
+
+
+
+You may do what you wish with the results that are returned. If you wish to contribute or have issues using the API please submit an issue under the throne-cli repository.

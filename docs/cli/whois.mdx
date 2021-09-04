@@ -1,0 +1,56 @@
+---
+id: whois
+title: Using the WHOIS module
+sidebar_label: throne whois
+description: Using the WHOIS module within throne
+---
+
+Excited to announce that the throne WHOIS module is powered by the [throne API](/docs/throne-api)! The throne API is leveraging RDAP resources from various registrars and IANA to provide the proper readable format to the user. RDAP in my opinion is a horrible "protocol", the whole vCardArray thing is absurd.
+
+Using the WHOIS module is very simple, `throne whois domain` is what you will put before your query. Your query can be any domain that you wish to get the WHOIS information for. throne will return the domain, any associated statuses, nameservers, DNSSEC status, contact information and registration information.
+
+:::caution Results may differ
+Keep in mind that results may differ domain to domain that you query. We return all the results that we receive from IANA and the domain registrar. Some domains use domain privacy features or their registrar doesn't publish the full WHOIS information. If you do not receive the information you expect, I would suggest attempting to go directly to the registrars website to see if you can get the information there.
+:::
+
+Let's take a look at an example of what throne can return, keep in mind this is a **FULL** result. You may not always see this information per the warning above.
+
+```bash title="Example - WHOIS"
+[user@throne ~]$ throne whois domain amazon.com
+---amazon.com WHOIS Information---
+Domain: amazon.com
+Domain Status: client update prohibited, client transfer prohibited, client delete prohibited, server update prohibited, server transfer prohibited, server delete prohibited
+Nameservers: ns1.p31.dynect.net, ns2.p31.dynect.net, ns3.p31.dynect.net, ns4.p31.dynect.net, pdns1.ultradns.net, pdns6.ultradns.co.uk
+DNSSEC Enabled?: False
+--Contact Information--
+Registrar Abuse Contact Information:
+ Name: MarkMonitor Inc.
+ Address: 3540 E Longwing Ln, Meridian, ID, 83646, US
+ Phone: +1.2083895740
+ Email: abusecomplaints@markmonitor.com
+Registrant Contact Information:
+ Name: Hostmaster, Amazon Legal Dept.
+ Org: Amazon Technologies, Inc.
+ Address: P.O. Box 8102, Reno, NV, 89507, US
+ Phone: +1.2062667010
+ Email: hostmaster@amazon.com
+Administrative Contact Information:
+ Name: Hostmaster, Amazon Legal Dept.
+ Org: Amazon Technologies, Inc.
+ Address: P.O. Box 8102, Reno, NV, 89507, US
+ Phone: +1.2062667010
+ Email: hostmaster@amazon.com
+Technical Contact Information:
+ Name: Hostmaster, Amazon Legal Dept.
+ Org: Amazon Technologies, Inc.
+ Address: P.O. Box 8102, Reno, NV, 89507, US
+ Phone: +1.2062667010
+ Email: hostmaster@amazon.com
+--Registration Info--
+Expiration Date: 2024-10-30T07:00:00.000+0000
+Registration Date: 1994-11-01T05:00:00.000+0000
+```
+
+We can see from the example above that we do receive the domain, associated statuses, nameservers, DNSSEC status, contact and registration information. If DNSSEC is enabled throne will return some additional information related to DNSSEC, however Amazon doesn't have it enabled on it's domain as we see above.
+
+The backend throne API does leverage Redis to cache results for 12 hours, once the 12 hours has passed the cache is cleared. This is used to avoid rate-limiting on registrars and IANA since we did experience rate-limiting during testing. That is actually the whole reason for the throne WHOIS API, we needed a way to get around the rate-limiting and this was the best way we could think of. Multiple users may be querying the same domains so caching the results not only helps us save on *small* amounts of outbound bandwidth but also helps retrieve the results as fast as we can for you (for duplicate queries). It may take a second or two to return results depending on how much our API needs to parse.

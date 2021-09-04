@@ -1,0 +1,97 @@
+---
+id: asn
+title: Using the ASN query
+sidebar_label: GET - /whois/asn
+description: Getting ASN related information
+---
+
+### Getting Started
+
+You just need to send a `GET` request to our ASN query endpoint.
+
+Domains: `https://api.throne.dev/whois/asn?query=XXXX`
+
+### Returned Results
+
+The results returned from the throne ASN API will be returned in a format that should be very easy to parse compared to a normal RDAP query. Lets take a look at what results get returned when we query for AS69. 
+
+Endpoint: `https://api.throne.dev/whois/asn?query=69`
+
+```title=Example - ASN Query - 69
+{
+  "rir": "ARIN",
+  "name": "UPENN-ANYCAST",
+  "entities": [
+    {
+      "name": "University of Pennsylvania",
+      "kind": "org",
+      "address": "3401 Walnut Street\r Suite 221A Philadelphia PA 19104-6228 United States",
+      "phone": null,
+      "email": null,
+      "roles": [
+        "registrant"
+      ]
+    },
+    {
+      "name": "University of Pennsylvania",
+      "kind": "group",
+      "address": "3401 Walnut Street Suite 221A Philadelphia PA 19104-6228 United States",
+      "phone": "+1-215-573-9631",
+      "email": "noc@isc.upenn.edu",
+      "roles": [
+        "noc"
+      ]
+    },
+    {
+      "name": "John O'Brien",
+      "kind": "individual",
+      "address": "3401 Walnut St Philadelphia PA 19104 United States",
+      "phone": "+1-215-898-9818",
+      "email": "obrienjw@upenn.edu",
+      "roles": [
+        "administrative",
+        "technical"
+      ]
+    },
+    {
+      "name": "Information Security Officer",
+      "kind": "group",
+      "address": "3401 Walnut Street\r Suite 232A Philadelphia PA 19104-6228 United States",
+      "phone": "+1-215-573-2037",
+      "email": "security@upenn.edu",
+      "roles": [
+        "abuse"
+      ]
+    }
+  ],
+  "handle": "AS69"
+}
+```
+
+:::caution Private ASNs
+Our API will not allow you to query any private ASN space. You will receive an error with reference to the appropriate RFC for that slice of private ASN space.
+:::
+
+Here is a list of possible errors and their descriptions you will encounter when querying private ASNs.
+
+* AS0 (autnum_reserved)
+  * The ASN queried is reserved by IANA, see RFC7607
+* AS23456 (autnum_reserved)
+  * The ASN queried is reserved by IANA, see RFC4893
+* AS64496 - AS64511 (autnum_reserved)
+  * The ASN queried is reserved for documentation and sample code, see RFC5398
+* AS64512 - AS65534 (autnum_priv_range)
+  * The ASN queried falls within private range, see RFC6996
+* AS65535 (autnum_reserved)
+  * The ASN queried is reserved by IANA, see RFC1930
+* AS65536 - AS65551 (autnum_reserved)
+  * The ASN queried is reserved for documentation and sample code, see RFC5398
+* AS4200000000 - AS4294967294 (autnum_priv_range)
+  * The ASN queried falls within private range, see RFC6996
+* AS4294967295 (autnum_reserved)
+  * The ASN queried is reserved by IANA, see RFC7300
+* AS numbers higher than AS4294967295 (out_autnum_range)
+  * The ASN queried is out of the available ASN range, see RFC1930 and RFC6793
+
+
+You may do what you wish with the results that are returned. If you wish to contribute or have issues using the API please submit an issue under the throne-cli repository.

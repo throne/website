@@ -1,0 +1,264 @@
+---
+id: pdb
+title: Using the PeeringDB module
+sidebar_label: throne pdb
+description: Using the peeringdb module within throne
+---
+
+throne has the ability to query the PeeringDB API to provide information on networks, organizations and IXs registered with them.
+
+```bash title="Help"
+[user@throne ~]$ throne pdb
+Usage: throne pdb [OPTIONS] COMMAND [ARGS]...
+
+  Retrieve information from PeeringDB.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  asn  Retrieves information about an organization by AS#.
+  ix   Returns IX search output from PeeringDB.
+```
+
+### pdb asn
+
+Currently the functionality of this command is pretty limited. `pdb asn` is designed to return information of an organization registered with PeeringDB based upon
+AS number. When you provide an AS number as the argument it only returns the specific ID, name, last created, last updated and current status of the object in PeeringDB.
+
+```bash text="Example"
+[user@throne ~]$ throne pdb asn 20473
+---PeeringDB Information---
+Id: 1051
+Name: Choopa, LLC
+Created: 2006-05-02T08:20:54Z
+Updated: 2016-03-14T20:34:28Z
+Status: ok
+
+Some results may have been ommited due to having no value.
+```
+
+You can see in the above output that throne does tell you it will ommit values that get returned which have no value. Increased functionality of this command may
+come in the future.
+
+### pdb ix
+
+Unlike the `pdb asn` command this one provides some really good output. `pdb ix` provides information of IXs returned based upon the query that is made. There is
+also is two options you can use as well as one argument that is required with this.
+
+```bash title="Help"
+[user@throne ~]$ throne pdb ix --help
+Usage: throne pdb ix [OPTIONS] IX
+
+  Returns IX search output from PeeringDB.
+
+Options:
+  -u, --unformatted   Returns output unformatted.
+  -c, --count NUMBER  Changes the number of results returned.  [default: 3]
+  --help              Show this message and exit.
+```
+
+Using `-c`/`--count` will change the number of results returned. Based upon the query you can get hundereds of results, so instead of printing them all to the
+users console it's been limited to 3 by default. That number can change if you specify using this option; ex `throne pdb ix AMS-IX --count 10`. Whatever number
+you specify after --count will be the maximum number of results returned. 
+
+Using `-u`/`--unformatted` will return the results in a more ugly fashion. By default all commands output in a "prettier" format, this turns that off and gives
+you what PeeringDB provides throne prior to parsing/processing.
+
+Let's take a look at the base command and see what we get when we search for `AMS-IX`.
+
+```bash title="Example - AMS-IX"
+[user@throne ~]$ throne pdb ix AMS-IX
+---PeeringDB Results---
+--AMS-IX--
+Name: Amsterdam Internet Exchange
+Location: Amsterdam, NL
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@ams-ix.net/+31205141717
+Policy Contact: info@ams-ix.net/+31203058999
+Total Networks: 865
+Traffic Stats: https://www.ams-ix.net/statistics/
+--AMS-IX Caribbean--
+Name: Amsterdam Internet Exchange Caribbean
+Location: Curacao, CW
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@ams-ix.cw/+31205141717
+Policy Contact: info@ams-ix.cw/+31203058999
+Total Networks: 11
+Traffic Stats: https://cw.ams-ix.net/technical--2/statistics
+--AMS-IX Hong Kong--
+Name: Amsterdam Internet Exchange Hong Kong
+Location: Hong Kong, HK
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@ams-ix.net/+31205141717
+Policy Contact: peering@ams-ix.net/+31203058999
+Total Networks: 51
+Traffic Stats: http://www.ams-ix.hk/total-traffic-statistics
+```
+
+From the above output we can see we were provided `3` results because we didn't specify the `--count` option. Along with that we're provided some good information
+on the IX.
+
+- Name - The name of the IX in PeeringDB
+- Location - The location the IX is out of (City, Country)
+- Media Type - The registered media type of the IX
+- Supported Protocol Types - Which protocols this IX supports
+- Tech Contact/Policy Contact - Contacts registered with the IX
+- Total Networks - Total number of peers/networks with this IX
+- Traffic Stats - The registered traffic stats URL with this IX (The URL may not work, it is dependant on the IX to keep that up to date in PeeringDB)
+
+Now lets see what happens if we up the count to provide a maximum of `10` results.
+
+```bash title="Example - AMS-IX (10)"
+[user@throne ~]$ throne pdb ix AMS-IX --count 10
+---PeeringDB Results---
+--AMS-IX--
+Name: Amsterdam Internet Exchange
+Location: Amsterdam, NL
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@ams-ix.net/+31205141717
+Policy Contact: info@ams-ix.net/+31203058999
+Total Networks: 865
+Traffic Stats: https://www.ams-ix.net/statistics/
+--AMS-IX Caribbean--
+Name: Amsterdam Internet Exchange Caribbean
+Location: Curacao, CW
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@ams-ix.cw/+31205141717
+Policy Contact: info@ams-ix.cw/+31203058999
+Total Networks: 11
+Traffic Stats: https://cw.ams-ix.net/technical--2/statistics
+--AMS-IX Hong Kong--
+Name: Amsterdam Internet Exchange Hong Kong
+Location: Hong Kong, HK
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@ams-ix.net/+31205141717
+Policy Contact: peering@ams-ix.net/+31203058999
+Total Networks: 51
+Traffic Stats: http://www.ams-ix.hk/total-traffic-statistics
+--AMS-IX BA--
+Name: AMS-IX Bay Area
+Location: San Francisco, San Jose, US
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@us.ams-ix.net/+12124614815
+Policy Contact: info@us.ams-ix.net/+12124614768
+Total Networks: 29
+Traffic Stats:
+--AMS-IX Chicago--
+Name: AMS-IX Chicago
+Location: Chicago, US
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@us.ams-ix.net/+12124614815
+Policy Contact: info@us.ams-ix.net/+12124614768
+Total Networks: 29
+Traffic Stats: https://chi.ams-ix.net/statistics
+--AMS-IX Mumbai--
+Name: Amsterdam Internet Exchange Mumbai
+Location: Mumbai, IN
+Media Type: Ethernet
+Supported Protocol Types: IPv6/Unicast IPv4
+Tech Contact: noc@ams-ix.net/+914466800000
+Policy Contact: info@ams-ix.net/+31203058999
+Total Networks: 57
+Traffic Stats: https://stats-mum.ams-ix.net/
+```
+
+We can see that throne only returned 6 results as that is all it could find for `AMS-IX` in PeeringDB. Just a reminder the number provided to `--count` is a maximum
+number to be returned, not the exact number of results returned.
+
+If you don't like the format that throne is providng the information you can always ask for it to be unformatted with the `--unformatted` option.
+
+```bash title="Example - AMS-IX (Unformatted)"
+[user@throne ~]$ throne pdb ix AMS-IX --unformatted
+---PeeringDB Results---
+--AMS-IX--
+Id: 26
+Org_id: 2634
+Name: AMS-IX
+Aka:
+Name_long: Amsterdam Internet Exchange
+City: Amsterdam
+Country: NL
+Region_continent: Europe
+Media: Ethernet
+Notes:
+Proto_unicast: True
+Proto_multicast: False
+Proto_ipv6: True
+Website: http://www.ams-ix.net/
+Url_stats: https://www.ams-ix.net/statistics/
+Tech_email: noc@ams-ix.net
+Tech_phone: +31205141717
+Policy_email: info@ams-ix.net
+Policy_phone: +31203058999
+Net_count: 865
+Ixf_net_count: 0
+Ixf_last_import: None
+Created: 2010-07-29T00:00:00Z
+Updated: 2020-01-22T04:24:06Z
+Status: ok
+--AMS-IX Caribbean--
+Id: 366
+Org_id: 2634
+Name: AMS-IX Caribbean
+Aka:
+Name_long: Amsterdam Internet Exchange Caribbean
+City: Curacao
+Country: CW
+Region_continent: South America
+Media: Ethernet
+Notes:
+Proto_unicast: True
+Proto_multicast: False
+Proto_ipv6: True
+Website: http://www.ams-ix.cw/
+Url_stats: https://cw.ams-ix.net/technical--2/statistics
+Tech_email: noc@ams-ix.cw
+Tech_phone: +31205141717
+Policy_email: info@ams-ix.cw
+Policy_phone: +31203058999
+Net_count: 11
+Ixf_net_count: 0
+Ixf_last_import: None
+Created: 2013-05-12T00:00:00Z
+Updated: 2020-01-22T04:24:06Z
+Status: ok
+--AMS-IX Hong Kong--
+Id: 577
+Org_id: 2634
+Name: AMS-IX Hong Kong
+Aka:
+Name_long: Amsterdam Internet Exchange Hong Kong
+City: Hong Kong
+Country: HK
+Region_continent: Asia Pacific
+Media: Ethernet
+Notes:
+Proto_unicast: True
+Proto_multicast: False
+Proto_ipv6: True
+Website: http://www.ams-ix.hk
+Url_stats: http://www.ams-ix.hk/total-traffic-statistics
+Tech_email: noc@ams-ix.net
+Tech_phone: +31205141717
+Policy_email: peering@ams-ix.net
+Policy_phone: +31203058999
+Net_count: 51
+Ixf_net_count: 0
+Ixf_last_import: None
+Created: 2012-03-28T00:00:00Z
+Updated: 2020-01-22T04:24:06Z
+Status: ok
+```
+
+While you do get a couple more variables returned when you use `--unformatted`, it's not always the best to use this command. It's a little harder to read
+when comparing it to thrones output. The additional variables provided by the `--unformatted` command were left out of throne due to them normally not
+containing information such as `Ixf_net_count` or the `Notes` field.
