@@ -9,7 +9,7 @@ To properly utilize our API you'll need to register for an account and authentic
 
 Getting started is easy, visit our [registration page](https://api.throne.dev/auth/login) and click `Sign Up` at the bottom to register for an account. Once you're authenticated you can use your credentials to do a `POST` request to `https://api.throne.dev/auth/login` with your credentials in the request body in the form of `X-WWW-FORM-URLENCODED`.
 
-```Python title="Python - Requests Example"
+```python title="Python - Requests Example"
 import requests
 
 url = "https://api.throne.dev/auth/login"
@@ -26,7 +26,7 @@ print(response.text)
 
 You'll receive a JSON response which contains your Bearer token on an `access_token` variable.
 
-```Python title="Token Response"
+```json title="Token Response"
 {
     "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Inp1Z3RDRWtPM2hvNVIwM3YxbHJZeSJ9.eyJpc3MiOiJodHRwczovL3sdfwer23r4LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJDSFSD3243rfsadsfsdzRiYTAwNzFmMDExN2EiLCJhdWQiOiJodHRwczovL2FwaS50aHJvbmUuZGV2IiwiaWF0IjoxNjMwNzI2NzY5LCJleHAiOjE2MzA4MTMxNjksImF6cCI6IjdWYUNZdjdOS3piQWw4TkFrRDRFSktITDdHWnl6SVFhIiSDFSEDF3424323fsdfsdfqwewe3243IiLCJndHkiOiJwYXNzd29yZCIsInBlcm1pc3Npb25zIjpbInBlcm06YWRtaW5pc3RyYXRvciJdfQ.",
     "scope": "",
@@ -37,7 +37,7 @@ You'll receive a JSON response which contains your Bearer token on an `access_to
 
 You can then take that token and use it within requests to our API endpoints. This token will need to get sent within the request headers.
 
-```Python title="Request Example w/ Bearer"
+```python title="Request Example w/ Bearer"
 import requests
 
 url = "https://api.throne.dev/whois/domain?query=amazon.com"
@@ -54,7 +54,7 @@ print(response.text)
 
 Once you send that request you should receive a valid response, using our example above this is what the response should look like.
 
-```JSON title="Request Response"
+```json title="Request Response"
 {
     "handle": "281209_DOMAIN_COM-VRSN",
     "domain": "amazon.com",

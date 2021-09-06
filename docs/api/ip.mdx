@@ -17,7 +17,7 @@ The results returned from the throne IP API will be returned in a format that sh
 
 Endpoint: `https://api.throne.dev/whois/ip?query=1.1.1.1`
 
-```API Output title="Example - IP Query - 1.1.1.1"
+```json title="Example - IP Query - 1.1.1.1"
 {
   "rir": "APNIC",
   "handle": "1.1.1.0 - 1.1.1.255",
@@ -61,7 +61,7 @@ You can also perform queries for whole subnets.
 To properly query a subnet you already need to know the CIDR notation of the subnet. If you attempt to query a subnet with an incorrect CIDR notation you will receive an `invalid_query` error.
 :::
 
-```API Output title="Example - Subnet Query - 8.8.8.0/24"
+```json title="Example - Subnet Query - 8.8.8.0/24"
 {
     "rir": "ARIN",
     "handle": "NET-8-8-8-0-1",
