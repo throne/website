@@ -28,6 +28,10 @@ Using `throne api setapi` you can retrieve your key from our authentication serv
 
 You may run this command directly and be prompted for credentials OR you can use options. See both examples below.
 
+:::caution Time Limit
+As of this addition (10/15/21), you will need to re-run this command every 30 days. You my also re-run it at anytime ahead of 30 days to refresh your token.
+:::
+
 ```bash title="Prompt"
 [user@throne ~]$ throne api setapi
 Username: testuser@throne.dev
@@ -37,7 +41,7 @@ Successfully set throne API key.
 ```
 
 :::caution API Scopes
-Unless you've already been instructed by throne to use a scope, always choose N (or n) when being prompted for scope. If you choose Y (or y) and set a scope it will have no effect.
+Unless you've already been instructed by our staff to use a scope, always choose N (or n) when being prompted for scope. If you choose Y (or y) and set a scope it will have no effect.
 :::
 
 ```bash title="Options"
