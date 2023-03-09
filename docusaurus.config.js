@@ -52,7 +52,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             'aria-label': 'Github Organization',
           },
           {
-            href: 'https://throne.instatus.com',
+            href: 'https://status.throne.dev',
             position: 'right',
             label: 'Status'
           },
