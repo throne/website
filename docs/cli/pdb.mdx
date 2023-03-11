@@ -9,17 +9,17 @@ throne has the ability to query the PeeringDB API to provide information on netw
 
 ```bash title="Help"
 [user@throne ~]$ throne pdb
-Usage: throne bgp [OPTIONS] COMMAND [ARGS]...
+Usage: throne pdb [OPTIONS] COMMAND [ARGS]...
 
-  Retrieve BGP related information.
+  Retrieve information from PeeringDB.
 
 Options:
   --help  Show this message and exit.
 
 Commands:
-  asn     Gets information on the specified AS number.
-  lg      BGP looking glass information based upon provided address or...
-  prefix  Gets prefix information for specified prefix or ip address.
+  asn  Retrieves information about an organization by AS#.
+  fac  Returns facility search output from PeeringDB.
+  ix   Returns IX search output from PeeringDB.
 ```
 
 ### pdb asn
