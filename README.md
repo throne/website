@@ -1,3 +1,6 @@
+# THIS PROJECT IS NO LONGER MAINTAINED AND HAS BEEN ARCHIVED AS OF JANUARY 29TH, 2025
+---
+
 # Website
 
 This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
